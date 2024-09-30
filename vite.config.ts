@@ -5,9 +5,14 @@ import { name, version, homepage } from './package.json'
 
 export default defineConfig((config) => {
   const port = 3000
-  const styleUrl = config.mode === 'development'
+  const isDev = config.mode === 'development'
+
+  const styleResource = isDev
     ? `http://localhost:${port}/style.css`
     : `${homepage}style.css?ts=${Date.now()}` // via gh pages
+
+  const connect = [new URL(homepage).hostname]
+  if (isDev) connect.push('localhost')
 
   return {
     plugins: [
@@ -18,8 +23,9 @@ export default defineConfig((config) => {
           name,
           version,
           homepage,
+          connect,
           match: 'https://example.com',
-          resource: [['style', styleUrl]],
+          resource: [['style', styleResource]],
         },
         server: {
           port
